@@ -1,0 +1,40 @@
+plugins {
+    id 'application'
+}
+
+def mainClassName = 'com.fonseca.novafrontier.lwjgl3.Lwjgl3Launcher'
+
+dependencies {
+    implementation project(':core')
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+}
+
+application {
+    mainClass = mainClassName
+}
+
+tasks.named('run') {
+    // macOS exige que o GLFW rode na thread principal
+    if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+        jvmArgs += '-XstartOnFirstThread'
+    }
+    ignoreExitValue = true
+}
+
+// Gera um "fat jar" executável: ./gradlew lwjgl3:dist  ->  lwjgl3/build/libs/NovaFrontier-1.0.0.jar
+tasks.register('dist', Jar) {
+    group = 'build'
+    description = 'Gera um jar unico executavel com todas as dependencias'
+    archiveFileName = "NovaFrontier-${project.version}.jar"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+    exclude 'META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}

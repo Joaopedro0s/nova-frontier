@@ -1,0 +1,15 @@
+dependencies {
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+test {
+    // o simulador de balanceamento imprime a taxa de sobrevivencia no console
+    testLogging {
+        showStandardStreams = true
+        events 'passed', 'failed'
+    }
+    // numero de partidas por configuracao: ./gradlew test -Dnf.runs=20
+    systemProperty 'nf.runs', System.getProperty('nf.runs', '4')
+}

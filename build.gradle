@@ -1,0 +1,22 @@
+allprojects {
+    group = 'com.fonseca.novafrontier'
+    version = '1.0.0'
+
+    ext {
+        gdxVersion = '1.13.1'
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.release = 17
+    }
+}
